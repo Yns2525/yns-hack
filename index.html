@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Yns‑Hack Şakası</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #00ff00;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+    #startBtn {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #output {
+      margin-top: 30px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>🟥 Güvenlik Kontrolü İçin Butona Basın</h1>
+  <button id="startBtn">Butona Bas</button>
+  <div id="output"></div>
+
+  <script>
+    const output = document.getElementById("output");
+    const button = document.getElementById("startBtn");
+
+    const lines = [
+      "Verileriniz analiz ediliyor...",
+      "Çalınan veriler sunucuya aktarılıyor...",
+      "IP adresiniz: 192.168.1.112",
+      "Kritik dosyalar alındı!",
+      "Sisteme arka kapı bırakıldı...",
+      "😈 ŞAKA YAPTIM! CİHAZIN GAYET GÜVENDE 😄"
+    ];
+
+    button.addEventListener("click", () => {
+      button.style.display = "none";
+      let i = 0;
+
+      function showLine() {
+        if (i < lines.length) {
+          output.innerText += "\n" + lines[i];
+          i++;
+          setTimeout(showLine, 1200);
+        }
+      }
+
+      showLine();
+    });
+  </script>
+</body>
+</html>
