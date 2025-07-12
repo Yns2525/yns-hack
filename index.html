@@ -2,107 +2,135 @@
 <head>
   <meta charset="UTF-8">
   <title>Yns‑Hack Şakası</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      background-color: #000;
+      margin: 0;
+      background-color: black;
       color: #00ff00;
       font-family: monospace;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      text-align: center;
-      padding: 20px;
-      transition: all 1s ease;
+      min-height: 100vh;
+      overflow: hidden;
     }
     #startBtn {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: red;
+      background: red;
       color: white;
+      font-size: 18px;
+      padding: 12px 24px;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
       margin-top: 20px;
     }
     #output {
       margin-top: 30px;
       white-space: pre-wrap;
+      max-height: 60vh;
+      overflow-y: auto;
+      text-align: left;
+      width: 100%;
     }
-    body.shake {
-      animation: shake 0.1s infinite;
+    .terminal {
+      background-color: #000000;
+      border: 2px solid #00ff00;
+      padding: 20px;
+      width: 90%;
+      max-width: 600px;
+      height: 300px;
+      overflow-y: auto;
     }
-    @keyframes shake {
-      0% { transform: translate(1px, 1px); }
-      25% { transform: translate(-1px, -2px); }
-      50% { transform: translate(2px, 0px); }
-      75% { transform: translate(-1px, 2px); }
-      100% { transform: translate(1px, -1px); }
+    .fullscreen-warning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #8B0000;
+      color: white;
+      font-size: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 9999;
+      display: none;
     }
   </style>
 </head>
 <body>
   <h1>🟥 Güvenlik Kontrolü İçin Butona Basın</h1>
   <button id="startBtn">Butona Bas</button>
-  <div id="output"></div><audio id="scream" src="https://www.soundjay.com/human/sounds/scream-01.mp3" preload="auto"></audio>
-
-  <script>
+  <div id="output" class="terminal"></div>
+  <div class="fullscreen-warning" id="finalMessage"></div>
+  <audio id="scream" src="https://www.soundjay.com/human/sounds/scream-01.mp3" preload="auto"></audio>  <script>
     const output = document.getElementById("output");
     const button = document.getElementById("startBtn");
+    const finalMessage = document.getElementById("finalMessage");
     const scream = document.getElementById("scream");
 
     const lines = [
-      "Verileriniz analiz ediliyor...",
-      "Çalınan veriler sunucuya aktarılıyor...",
-      "IP adresiniz alınıyor...",
+      "🔍 Sistem analizi başlatılıyor...",
+      "📡 Sunucuyla bağlantı kuruluyor...",
+      "🔓 Güvenlik duvarı aşıldı...",
+      "📁 Dosyalar taranıyor...",
+      "📤 WhatsApp mesajları yedekleniyor...",
+      "📤 Kamera erişimi sağlandı...",
+      "📤 Mikrofon erişimi sağlandı...",
+      "🧠 Bellek verileri çözümleniyor..."
     ];
 
     const dosyalar = [
-      "DCIM/foto1.jpg",
-      "Whatsapp/mesajlar.db",
-      "TelefonRehberi.csv",
-      "Parolalar.txt"
+      "📁 /storage/DCIM/foto1.jpg siliniyor...",
+      "📁 /data/data/com.whatsapp/messages.db siliniyor...",
+      "📁 /system/accounts.txt siliniyor...",
+      "📁 /passwords/passwords.csv siliniyor..."
     ];
 
     button.addEventListener("click", () => {
       button.style.display = "none";
-      document.body.classList.add("shake");
       scream.play();
 
       let i = 0;
-      function showLine() {
+      function yazSatirlar() {
         if (i < lines.length) {
           output.innerText += "\n" + lines[i];
           i++;
-          setTimeout(showLine, 1500);
+          setTimeout(yazSatirlar, 1000);
         } else {
           fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
             .then(data => {
-              output.innerText += `\nGerçek IP adresiniz: ${data.ip}`;
+              output.innerText += `\n🌐 IP adresiniz: ${data.ip}`;
+              output.innerText += `\n📱 Cihaz türü: ${/iPhone|Android/i.test(navigator.userAgent) ? "Mobil" : "Masaüstü"}`;
+              let j = 0;
               setTimeout(() => {
-                dosyalar.forEach((dosya, index) => {
-                  setTimeout(() => {
-                    output.innerText += `\n📁 ${dosya} siliniyor...`;
-                  }, index * 1000);
-                });
-
-                setTimeout(() => {
-                  document.body.style.backgroundColor = "#8B0000";
-                  document.body.style.color = "white";
-                  output.innerText += "\n\n⚠️ Sistem çöküyor... Lütfen bekleyin...";
-                }, dosyalar.length * 1000 + 1000);
-
-                setTimeout(() => {
-                  document.body.classList.remove("shake");
-                  document.body.innerHTML = "<h1 style='font-size:50px;'>😈 ŞAKA YAPTIM!<br>📱 Cihazın güvende 😄</h1>";
-                }, dosyalar.length * 1000 + 4000);
-              });
+                const fakeLoad = setInterval(() => {
+                  if (j < dosyalar.length) {
+                    output.innerText += "\n" + dosyalar[j];
+                    j++;
+                  } else {
+                    clearInterval(fakeLoad);
+                    setTimeout(() => {
+                      finalMessage.innerHTML = "⚠️ CİHAZINIZA SALDIRI TESPİT EDİLDİ ⚠️<br>📤 Tüm verileriniz aktarılıyor...";
+                      finalMessage.style.display = "flex";
+                      setTimeout(() => {
+                        finalMessage.innerHTML = "😈 ŞAKA YAPTIM!<br>📱 Cihazın güvende!";
+                        document.body.style.backgroundColor = "green";
+                      }, 4000);
+                    }, 1000);
+                  }
+                }, 1000);
+              }, 1000);
             });
         }
       }
 
-      showLine();
+      yazSatirlar();
     });
   </script></body>
 </html>
