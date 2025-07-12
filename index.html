@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="tr">
+<!DOCTYPE html><html lang="tr">
 <head>
   <meta charset="UTF-8">
   <title>Yns‑Hack Şakası</title>
@@ -15,6 +14,7 @@
       height: 100vh;
       text-align: center;
       padding: 20px;
+      transition: all 1s ease;
     }
     #startBtn {
       padding: 10px 20px;
@@ -29,40 +29,80 @@
       margin-top: 30px;
       white-space: pre-wrap;
     }
+    body.shake {
+      animation: shake 0.1s infinite;
+    }
+    @keyframes shake {
+      0% { transform: translate(1px, 1px); }
+      25% { transform: translate(-1px, -2px); }
+      50% { transform: translate(2px, 0px); }
+      75% { transform: translate(-1px, 2px); }
+      100% { transform: translate(1px, -1px); }
+    }
   </style>
 </head>
 <body>
   <h1>🟥 Güvenlik Kontrolü İçin Butona Basın</h1>
   <button id="startBtn">Butona Bas</button>
-  <div id="output"></div>
+  <div id="output"></div><audio id="scream" src="https://www.soundjay.com/human/sounds/scream-01.mp3" preload="auto"></audio>
 
   <script>
     const output = document.getElementById("output");
     const button = document.getElementById("startBtn");
+    const scream = document.getElementById("scream");
 
     const lines = [
       "Verileriniz analiz ediliyor...",
       "Çalınan veriler sunucuya aktarılıyor...",
-      "IP adresiniz: 192.168.1.112",
-      "Kritik dosyalar alındı!",
-      "Sisteme arka kapı bırakıldı...",
-      "😈 ŞAKA YAPTIM! CİHAZIN GAYET GÜVENDE 😄"
+      "IP adresiniz alınıyor...",
+    ];
+
+    const dosyalar = [
+      "DCIM/foto1.jpg",
+      "Whatsapp/mesajlar.db",
+      "TelefonRehberi.csv",
+      "Parolalar.txt"
     ];
 
     button.addEventListener("click", () => {
       button.style.display = "none";
-      let i = 0;
+      document.body.classList.add("shake");
+      scream.play();
 
+      let i = 0;
       function showLine() {
         if (i < lines.length) {
           output.innerText += "\n" + lines[i];
           i++;
-          setTimeout(showLine, 1200);
+          setTimeout(showLine, 1500);
+        } else {
+          fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => {
+              output.innerText += `\nGerçek IP adresiniz: ${data.ip}`;
+              setTimeout(() => {
+                dosyalar.forEach((dosya, index) => {
+                  setTimeout(() => {
+                    output.innerText += `\n📁 ${dosya} siliniyor...`;
+                  }, index * 1000);
+                });
+
+                setTimeout(() => {
+                  document.body.style.backgroundColor = "#8B0000";
+                  document.body.style.color = "white";
+                  output.innerText += "\n\n⚠️ Sistem çöküyor... Lütfen bekleyin...";
+                }, dosyalar.length * 1000 + 1000);
+
+                setTimeout(() => {
+                  document.body.classList.remove("shake");
+                  document.body.innerHTML = "<h1 style='font-size:50px;'>😈 ŞAKA YAPTIM!<br>📱 Cihazın güvende 😄</h1>";
+                }, dosyalar.length * 1000 + 4000);
+              });
+            });
         }
       }
 
       showLine();
     });
-  </script>
-</body>
+  </script></body>
 </html>
